@@ -37,7 +37,16 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--nav-h) + 20px);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  [id] {
+    scroll-margin-top: calc(var(--nav-h) + 20px);
+  }
 
   body{
     font-family: 'Manrope', system-ui, -apple-system, sans-serif;
@@ -123,14 +132,48 @@
     .nav-links{ display: flex; }
   }
 
-  /* ===== HERO (компактный) ===== */
+  /* ===== HERO с пейзажем Якутии на фоне ===== */
   .hero{
     position: relative;
     padding: 40px 0 60px;
     overflow: hidden;
+    isolation: isolate;
   }
   @media (min-width: 768px){
     .hero{ padding: 56px 0 80px; }
+  }
+
+  /* Слой 1: сам пейзаж — еле видимый, в тёплой гамме */
+  .hero::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("https://trip4you.ru/wp-content/uploads/2024/02/yakutiya-chto-posmotret.jpg");
+    background-size: cover;
+    background-position: center 40%;
+    background-repeat: no-repeat;
+    background-color: var(--bg);
+    filter: grayscale(0.7) sepia(0.55) brightness(0.5) contrast(1.15) blur(1px);
+    opacity: 0.9;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Слой 2: тёплая вуаль — растворяет пейзаж в фон */
+  .hero::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 0%, rgba(229,181,71,0.10), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 20% 100%, rgba(91,58,26,0.10), transparent 65%),
+      linear-gradient(180deg,
+        rgba(10,9,8,0.35) 0%,
+        rgba(10,9,8,0.55) 45%,
+        rgba(10,9,8,0.85) 80%,
+        var(--bg) 100%);
+    z-index: 1;
+    pointer-events: none;
   }
 
   .blob{
@@ -139,7 +182,7 @@
     filter: blur(140px);
     opacity: 0.35;
     pointer-events: none;
-    z-index: 0;
+    z-index: 2;
     will-change: transform;
   }
   .blob-gold{
@@ -165,7 +208,7 @@
 
   .hero-inner{
     position: relative;
-    z-index: 1;
+    z-index: 3;
     display: grid;
     grid-template-columns: 1fr;
     gap: 28px;
@@ -197,6 +240,8 @@
     padding: 7px 14px;
     border: 1px solid rgba(229,181,71,0.3);
     border-radius: 100px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
 
   .hero-name{
@@ -211,6 +256,7 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
+    text-shadow: 0 1px 40px rgba(0,0,0,0.4);
   }
 
   .hero-sub{
@@ -223,7 +269,6 @@
     max-width: 460px;
   }
 
-  /* Hero photo — маленький */
   .hero-photo{
     position: relative;
     width: 180px;
